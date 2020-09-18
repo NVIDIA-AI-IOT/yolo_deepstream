@@ -1,0 +1,8 @@
+*.cfg
+*.weights
+*.onnx
+*.mp4
+*.engine
+*.log
+*.o
+*.so
