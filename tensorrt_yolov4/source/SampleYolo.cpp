@@ -214,7 +214,7 @@ bool SampleYolo::constructNetwork(SampleUniquePtr<nvinfer1::IBuilder>& builder,
 
     config->setMaxWorkspaceSize(4096_MiB);
 
-    builder->allowGPUFallback(true);
+    config->setFlag(BuilderFlag::kGPU_FALLBACK);
 
     if (mParams.fp16)
     {
