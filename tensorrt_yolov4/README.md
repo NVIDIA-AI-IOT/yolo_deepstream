@@ -1,4 +1,4 @@
-# YOLOv4 Standalone Program of Multi-Tasks
+# YOLOv4 Standalone Program of Multi-Tasks 
 
 ## 1. Contents
 
