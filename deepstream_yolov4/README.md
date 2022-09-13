@@ -11,7 +11,7 @@
 
 ### 2.1 Please make sure DeepStream 5.0 is properly installed ###
 
-### 2.2 Generate YOLOv4 TensorRT Engine ###
+### 2.2 Generate YOLOv4 Model ###
 
 - Go to this pytorch repository <https://github.com/Tianxiaomo/pytorch-YOLOv4> where you can convert YOLOv4 Pytorch model into **ONNX**
 - Other famous YOLOv4 pytorch repositories as references:
