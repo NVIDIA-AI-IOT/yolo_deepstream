@@ -9,7 +9,7 @@
 
 ## 2. Pre-requisites: ##
 
-### 2.1 Please make sure DeepStream 5.0 is properly installed ###
+### 2.1 Please make sure DeepStream 5.0+ is properly installed ###
 
 ### 2.2 Generate YOLOv4 Model ###
 
