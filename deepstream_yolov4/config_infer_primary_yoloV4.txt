@@ -58,9 +58,10 @@ gpu-id=0
 net-scale-factor=0.0039215697906911373
 #0=RGB, 1=BGR
 model-color-format=0
-model-engine-file=yolov4_1_3_320_512_fp16.engine
+onnx-file=yolov4_-1_3_416_416_nms_dynamic.onnx
+model-engine-file=yolov4_-1_3_416_416_nms_dynamic.onnx_b16_gpu0_fp16.engine
 labelfile-path=labels.txt
-batch-size=1
+batch-size=16
 ## 0=FP32, 1=INT8, 2=FP16 mode
 network-mode=2
 num-detected-classes=80
