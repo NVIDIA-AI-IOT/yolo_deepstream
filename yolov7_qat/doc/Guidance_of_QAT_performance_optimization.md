@@ -112,6 +112,7 @@ first we export fp32 onnx model
 $ python export.py --weights ./yolov7.pt --grid --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640
 ```
 Then we copy the onnx to target device, Here we use Jetson OrinX as our target device, TensorRT has different behavior on different GPU. So the test must run on your final target device
+
 Run PTQ benchmark
 ```bash
 $ /usr/src/tensorrt/bin/trtexec --onnx=yolov7.onnx --fp16 --int8 --verbose --saveEngine=yolov7_ptq.engine --workspace=1024000 --warmUp=500 --duration=10  --useCudaGraph --useSpinWait --noDataTransfers --exportLayerInfo=yolov7_ptq_layer.json --profilingVerbosity=detailed --exportProfile=yolov7_ptq_profile.json
