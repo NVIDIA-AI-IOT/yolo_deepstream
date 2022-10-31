@@ -3,7 +3,7 @@
 ## Description
  We use [TensorRT's pytorch quntization tool](https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization) to finetune training QAT yolov7 from the pre-trained weight, then export the model to onnx and deploy it with TensorRT. The accuray and performance can be found in below table.
 
-|  Method   | Calibration method  |mAP<sup>val<br>0.5:0.95 |mAP<sup>val<br>0.5 |batch-1 fps<br>Jetson Orin-X  |batch-16 fps<br>Jetson Orin-X  |weight|
+|  Method   | Calibration method  | mAP<sup>val<br>0.5|mAP<sup>val<br>0.5:0.95 |batch-1 fps<br>Jetson Orin-X  |batch-16 fps<br>Jetson Orin-X  |weight|
 |  ----  | ----  |----  |----  |----|----|-|
 | pytorch FP16 | -             | 0.6972 | 0.5120 |-|-|[yolov7.pt](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt)|
 | pytorch PTQ-INT8  | Histogram(MSE)  | 0.6957 | 0.5100 |-|-|[yolov7_ptq.pt](https://drive.google.com/file/d/1AMymKjKMDmhuNSI3jzL6dv_Pc3rdDDj1/view?usp=sharing) [yolov7_ptq_640.onnx](https://drive.google.com/file/d/1kvCV8PxV6RCidehN4Wp78M116oZ_mSTX/view?usp=sharing)|
