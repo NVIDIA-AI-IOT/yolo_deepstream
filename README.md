@@ -23,7 +23,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 - Testing Device : 
 Jetson AGX Orin 64GB(PowerMode:MAXN + GPU-freq:1.3GHz + CPU:12-core-2.2GHz)
 
-|precision      |Number of streams | Batch Size | trtexec FPS| deepstream-app FPS<br>with cuda-post-process |deepstream-app FPS<br> with cpu-post-process|
+|precision      |Number <br>of streams | Batch Size | trtexec FPS| deepstream-app FPS<br>with cuda-post-process |deepstream-app FPS<br> with cpu-post-process|
 |-----------    |----------------- | -----------|----------- |-----------|-----------|
 |  fp16         |  1               |     1      |       126  | 124       |   120     |
 |  fp16         |  16              |    16      |       162  | 145       |   135     |
