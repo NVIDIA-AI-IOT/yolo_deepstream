@@ -11,7 +11,7 @@
 | TensorRT PTQ-INT8 | TensorRT built in EntropyCalibratorV2 | 0.6317 | 0.4573 |207|264|-|
 | TensorRT QAT-INT8 | Histogram(MSE)  | 0.6962 | 0.5113 |207|266|[yolov7_qat_640.onnx](https://drive.google.com/file/d/1qn-p4N3GZojIOvvxkzmPGCQKR6q4ov73/view?usp=sharing)|
  - network input resolution: 3x640x640
-
+ - note: trtexec cudaGraph is enabled
 
 ## How To QAT Training
 ### 1.Setup
