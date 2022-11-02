@@ -36,10 +36,12 @@ from pathlib import Path
 
 # PyTorch
 import torch
+import torch.nn as nn
 
 # YoloV7
 import test
 from models.yolo import Model
+from models.common import Conv
 from utils.datasets import create_dataloader
 from utils.google_utils import attempt_download
 from utils.general import init_seeds
@@ -65,6 +67,12 @@ def load_yolov7_model(weight, device) -> Model:
 
     attempt_download(weight)
     model = torch.load(weight, map_location=device)["model"]
+    for m in model.modules():
+        if type(m) is nn.Upsample:
+            m.recompute_scale_factor = None  # torch 1.11.0 compatibility
+        elif type(m) is Conv:
+            m._non_persistent_buffers_set = set()  # pytorch 1.6.0 compatibility
+            
     model.float()
     model.eval()
 
@@ -93,9 +101,15 @@ def create_coco_val_dataloader(cocodir, batch_size=10, keep_images=None):
         f"{cocodir}/val2017.txt", 
         imgsz=640, 
         batch_size=batch_size, 
-        length=keep_images,
         opt=collections.namedtuple("Opt", "single_cls")(False),
         augment=False, hyp=None, rect=True, cache=False,stride=32,pad=0.5, image_weights=False)[0]
+
+    def subclass_len(self):
+        if keep_images is not None:
+            return keep_images
+        return len(self.img_files)
+
+    loader.dataset.__len__ = subclass_len
     return loader
 
 
@@ -144,7 +158,7 @@ def cmd_quantize(weight, cocodir, device, ignore_policy, save_ptq, save_qat, sup
     val_dataloader   = create_coco_val_dataloader(cocodir)
     quantize.replace_to_quantization_module(model, ignore_policy=ignore_policy)
     quantize.apply_custom_rules_to_quantizer(model, export_onnx)
-    quantize.calibrate_model(model, train_dataloader)
+    quantize.calibrate_model(model, train_dataloader, device)
 
     json_save_dir = "." if os.path.dirname(save_ptq) == "" else os.path.dirname(save_ptq)
     summary_file = os.path.join(json_save_dir, "summary.json")

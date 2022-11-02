@@ -183,7 +183,7 @@ def apply_custom_rules_to_quantizer(model : torch.nn.Module, export_onnx : Calla
     os.remove("quantization-custom-rules-temp.onnx")
 
 
-def calibrate_model(model : torch.nn.Module, dataloader, num_batch=25):
+def calibrate_model(model : torch.nn.Module, dataloader, device, num_batch=25):
 
     def compute_amax(model, **kwargs):
         for name, module in model.named_modules():
@@ -193,6 +193,8 @@ def calibrate_model(model : torch.nn.Module, dataloader, num_batch=25):
                         module.load_calib_amax()
                     else:
                         module.load_calib_amax(**kwargs)
+
+                    module._amax = module._amax.to(device)
         
     def collect_stats(model, data_loader, device, num_batch=200):
         """Feed data to the network and collect statistics"""
@@ -224,7 +226,6 @@ def calibrate_model(model : torch.nn.Module, dataloader, num_batch=25):
                 else:
                     module.enable()
 
-    device = next(model.parameters()).device
     collect_stats(model, dataloader, device, num_batch=num_batch)
     compute_amax(model, method="mse")
 
