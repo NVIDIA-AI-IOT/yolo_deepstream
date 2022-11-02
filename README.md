@@ -30,6 +30,8 @@ Jetson AGX Orin 64GB(PowerMode:MAXN + GPU-freq:1.3GHz + CPU:12-core-2.2GHz)
 |  int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
 |  int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
 
+- note: trtexec cudaGraph not enabled as deepstream not support cudaGraph
+
 ## Code structure
 ```bash
 ├── deepstream_yolo
