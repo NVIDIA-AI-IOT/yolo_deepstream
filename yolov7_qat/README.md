@@ -1,5 +1,4 @@
 # YoloV7 Quantization Aware Training
-[toc]
 ## Description
  We use [TensorRT's pytorch quntization tool](https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization) to finetune training QAT yolov7 from the pre-trained weight, then export the model to onnx and deploy it with TensorRT. The accuray and performance can be found in below table.
 
