@@ -33,7 +33,7 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 |  OrinX|  int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
 |  OrinX|  int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
 |  T4   |  fp16         |  1               |     1      |      132   |    125    |  123      |
-|  T4   |  fp16         |  16              |    16      |      164   |   169     |   123     |
+|  T4   |  fp16         |  16              |    16      |      169   |   169     |   123     |
 |  T4   |  int8(PTQ/QAT)|  1               |     1      |     208  | 133      |    127    |
 |  T4   |  int8(PTQ/QAT)|  16              |    16      |     305    |  300      |   132      |
 
