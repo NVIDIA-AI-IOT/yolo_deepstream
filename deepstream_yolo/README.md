@@ -59,5 +59,5 @@ in [config_infer_primary_yoloV7.txt](deepstream_yolo/config_infer_primary_yoloV7
 - `parse-bbox-func-name=NvDsInferParseCustomYoloV7_cuda` -> `parse-bbox-func-name=NvDsInferParseCustomYoloV7`
 - `disable-output-host-copy=1` -> `disable-output-host-copy=0`
 
-The performance of the CPU-post-processing and CUDA-post-processing result can be found in [Performance](README.md)
+The performance of the CPU-post-processing and CUDA-post-processing result can be found in [Performance](https://github.com/NVIDIA-AI-IOT/yolo_deepstream#performance)
 
