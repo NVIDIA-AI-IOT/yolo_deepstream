@@ -23,12 +23,17 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 - Testing Device : 
 Jetson AGX Orin 64GB(PowerMode:MAXN + GPU-freq:1.3GHz + CPU:12-core-2.2GHz)
 
-|precision      |Number <br>of streams | Batch Size | trtexec FPS| deepstream-app FPS<br>with cuda-post-process |deepstream-app FPS<br> with cpu-post-process|
-|-----------    |----------------- | -----------|----------- |-----------|-----------|
-|  fp16         |  1               |     1      |       126  | 124       |   120     |
-|  fp16         |  16              |    16      |       162  | 145       |   135     |
-|  int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
-|  int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
+|Device      |precision      |Number <br>of streams | Batch Size | trtexec FPS| deepstream-app FPS<br>with cuda-post-process |deepstream-app FPS<br> with cpu-post-process|
+|-----------    |-----------    |----------------- | -----------|----------- |-----------|-----------|
+|  OrinX|  fp16         |  1               |     1      |       126  | 124       |   120     |
+|  OrinX|  fp16         |  16              |    16      |       162  | 145       |   135     |
+|  OrinX|  int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
+|  OrinX|  int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
+|  T4   |  fp16         |  1               |     1      |      132   |    125    |  123      |
+|  T4   |  fp16         |  16              |    16      |      164   |   169     |        |
+|  T4   |  int8(PTQ/QAT)|  1               |     1      |     208  | 133      |    127    |
+|  T4   |  int8(PTQ/QAT)|  16              |    16      |     305    |  300      |         |
+
 
 - note: trtexec cudaGraph not enabled as deepstream not support cudaGraph
 
