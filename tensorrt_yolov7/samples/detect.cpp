@@ -62,6 +62,12 @@ int main(int argc, char** argv){
 
     std::string engine_path = parse_model_path(cmdLine);
     std::vector<std::string> img_paths = parse_img_paths(cmdLine);
+    // print img paths
+    std::cout<<"input "<<img_paths.size()<<" images, paths: ";
+    for(int i = 0;i < img_paths.size();i++) {
+        std::cout<< img_paths[i]<<", ";
+    }
+    std::cout<<std::endl;
     
     Yolov7 yolov7(engine_path);
 

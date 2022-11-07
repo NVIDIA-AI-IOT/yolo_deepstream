@@ -166,10 +166,10 @@ std::vector<cv::Mat> Yolov7::preProcess(std::vector<cv::Mat> &cv_img) {
         cv::Mat m2x3_d2i(2, 3, CV_32F, d2i);  // dst to image, 2x3 matrix
         cv::invertAffineTransform(m2x3_i2d, m2x3_d2i);
         std::vector<float> d2i_1{d2i[0],d2i[1],d2i[2],d2i[3],d2i[4],d2i[5]};
-        md2i.push_back(d2i_1);
-        cv::Mat input_image(mInputDim.d[2], mInputDim.d[3], CV_8UC3);
-        cv::warpAffine(cv_img[i], input_image, m2x3_i2d, input_image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar::all(114));
-
+        this->md2i.push_back(d2i_1);
+        cv::Mat input_image;
+        cv::cvtColor(cv_img[i], input_image, cv::COLOR_BGR2RGB);
+        cv::warpAffine(input_image, input_image, m2x3_i2d, cv::Size(mInputDim.d[3], mInputDim.d[2]), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar::all(114));
         input_image.convertTo(input_image, CV_32FC3, 1.0f/255.0f, 0);
         cv::Mat nchwMat;
         hwc_to_chw(input_image, nchwMat);
@@ -221,16 +221,27 @@ std::vector<cv::Mat> Yolov7::preProcess4Validate(std::vector<cv::Mat> &cv_img) {
     
 }
 int Yolov7::pushImg(void *imgBuffer, int numImg, bool fromCPU) {
+    std::cout<<"hello"<<std::endl;
     if(mImgPushed + numImg > mMaxBatchSize) {
         std::cerr <<" error: mImgPushed = "<< mImgPushed <<" numImg = "<<numImg<<" mMaxBatchSize= "<< mMaxBatchSize<<", mImgPushed + numImg > mMaxBatchSize "<<std::endl;
     }
+    std::cout<<"hello1"<<std::endl;
+
     if(fromCPU) {
+    std::cout<<"hello2"<<std::endl;
+
         checkCudaErrors(cudaMemcpy(this->mBindings[0].get() + mImgPushed*mImgBufferSize, imgBuffer, mImgBufferSize * numImg, cudaMemcpyHostToDevice));
+    std::cout<<"hello2"<<std::endl;
+
     }
+
     else {
         checkCudaErrors(cudaMemcpy(this->mBindings[0].get() + mImgPushed*mImgBufferSize, imgBuffer, mImgBufferSize * numImg, cudaMemcpyDeviceToDevice));
     }
+    std::cout<<"hello3"<<std::endl;
+
     mImgPushed += numImg;
+    
     return 0;
 }
 
