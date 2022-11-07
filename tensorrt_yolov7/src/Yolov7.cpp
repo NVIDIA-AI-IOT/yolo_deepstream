@@ -221,25 +221,15 @@ std::vector<cv::Mat> Yolov7::preProcess4Validate(std::vector<cv::Mat> &cv_img) {
     
 }
 int Yolov7::pushImg(void *imgBuffer, int numImg, bool fromCPU) {
-    std::cout<<"hello"<<std::endl;
     if(mImgPushed + numImg > mMaxBatchSize) {
         std::cerr <<" error: mImgPushed = "<< mImgPushed <<" numImg = "<<numImg<<" mMaxBatchSize= "<< mMaxBatchSize<<", mImgPushed + numImg > mMaxBatchSize "<<std::endl;
     }
-    std::cout<<"hello1"<<std::endl;
-
     if(fromCPU) {
-    std::cout<<"hello2"<<std::endl;
-
         checkCudaErrors(cudaMemcpy(this->mBindings[0].get() + mImgPushed*mImgBufferSize, imgBuffer, mImgBufferSize * numImg, cudaMemcpyHostToDevice));
-    std::cout<<"hello2"<<std::endl;
-
     }
-
     else {
         checkCudaErrors(cudaMemcpy(this->mBindings[0].get() + mImgPushed*mImgBufferSize, imgBuffer, mImgBufferSize * numImg, cudaMemcpyDeviceToDevice));
     }
-    std::cout<<"hello3"<<std::endl;
-
     mImgPushed += numImg;
     
     return 0;
