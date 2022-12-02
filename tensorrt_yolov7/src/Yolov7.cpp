@@ -42,7 +42,7 @@ static const char* cocolabels[] = {
 };
 
 Yolov7::Yolov7(std::string engine_path) {
-    this->mInference_count = 0;
+
     this->mTotal_inference_time = 0;
     this->mInference_count = 0;
 
