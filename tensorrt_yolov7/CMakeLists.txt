@@ -22,7 +22,7 @@
 ################################################################################
 cmake_minimum_required( VERSION 3.0 )
 
-project( TRT_BENCH )
+project( YOLOV7 )
 enable_language( CUDA )
 find_package(CUDA)
 set( CMAKE_C_STANDARD 99 )
