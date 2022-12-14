@@ -10,7 +10,7 @@ Quantization aware training emulates inference-time quantization, creating a mod
 
 Another important question is to make sence what is the best performance of a QAT model on TensorRT. There are two workflows for creating quantized networks in TensorRT, one is Post-training quantization (PTQ). It derives scale factors after the network has been trained. TensorRT provides a workflow for PTQ, called calibration, where it measures the distribution of activations within each activation tensor as the network executes on representative input data, then uses that distribution to estimate a scale value for the tensor. The other way is QAT, In QAT, the scaling operations to transform between the quantized and unquantized values are represented explicitly by IQuantizeLayer (C++, Python) and IDequantizeLayer (C++, Python) nodes in the graph - these will henceforth be referred to as Q/DQ nodes(see pic as below). By contrast with implicit quantization, the explicit form specifies exactly where conversion to and from INT8 is performed, and the optimizer will perform only precision conversions that are dictated by the semantics of the model, even if adding extra conversions results in an engine that executes faster (for example, choosing an INT8 kernel implementation to execute a layer specified as having float precision or vice versa).
 
-<img src="./imgs/QATConv.png" width=18% alt="图片名称" align=center />
+<img src="./imgs/QATConv.png" width=18% alt="imgname" align=center />
 
 About the Q&DQ processing of TensorRT, please refer :[TensorRT-developer-guide: Processing of Q/DQ Networks](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#tensorrt-process-qdq)
 
