@@ -1,7 +1,7 @@
 # Yolov7 TensorRT cpp
 
 ## Description
-This is a yolov7 TensorRT cpp app. Fisrt, using trtexec to convert onnx model to FP32 or FP16 TensorRT engine ,or INT8 TensorRT engine from the QAT model finetuned from [yolov7_qat](./yolov7_qat).
+This is a yolov7 TensorRT cpp app. Fisrt, using trtexec to convert onnx model to FP32 or FP16 TensorRT engine ,or INT8 TensorRT engine from the QAT model finetuned from [yolov7_qat](../yolov7_qat).
 Then you can use the `detect/video_detect` app to detect a list of images(images number must smaller than the batchsize of the model)/video. or use `validate_coco` app to test mAP of the TensorRT engine.
 ## Prerequisites
 #### Install opencv
