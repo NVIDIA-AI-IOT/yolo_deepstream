@@ -74,19 +74,23 @@ is-classifier=0
 ## 1=DBSCAN, 2=NMS, 3= DBSCAN+NMS Hybrid, 4 = None(No clustering)
 cluster-mode=2
 maintain-aspect-ratio=1
+symmetric-padding=1
+## Bilinear Interpolation
+scaling-filter=1
 #parse-bbox-func-name=NvDsInferParseCustomYoloV7
 parse-bbox-func-name=NvDsInferParseCustomYoloV7_cuda
 #disable-output-host-copy=0
 disable-output-host-copy=1
 custom-lib-path=nvdsinfer_custom_impl_Yolo/libnvdsinfer_custom_impl_Yolo.so
-#scaling-filter=0
 #scaling-compute-hw=0
+## start from DS6.2
+crop-objects-to-roi-boundary=1
 
 
 [class-attrs-all]
 #nms-iou-threshold=0.3
 #threshold=0.7
-nms-iou-threshold=0.45
+nms-iou-threshold=0.65
 pre-cluster-threshold=0.25
 topk=300
 
