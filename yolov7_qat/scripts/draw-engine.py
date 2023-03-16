@@ -24,8 +24,9 @@
 
 """
 This script generates an SVG diagram of the input engine graph SVG file.
-
-Note: this script requires graphviz which can be installed manually:
+Note:
+    THIS SCRIPT DEPENDS ON LIB: https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer
+    this script requires graphviz which can be installed manually:
     $ sudo apt-get --yes install graphviz
     $ python3 -m pip install graphviz networkx
 """
