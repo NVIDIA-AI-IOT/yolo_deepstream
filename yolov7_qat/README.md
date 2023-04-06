@@ -74,3 +74,7 @@ $ wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
 ```bash
 $ python scripts/qat.py quantize yolov7-tiny.pt --qat=qat.pt --ptq=ptq.pt --ignore-policy="model\.77\.m\.(.*)|model\.0\.(.*)" --supervision-stride=1 --eval-ptq --eval-origin
 ```
+
+## Note
+- For YoloV5, please use the script `scripts/qat-yolov5.py`. This adds QAT support for `Add operator`, making it more performant.
+- Please refer to the `quantize.replace_bottleneck_forward` function to handle the `Add operator`.

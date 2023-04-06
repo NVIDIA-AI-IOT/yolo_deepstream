@@ -37,11 +37,30 @@ from pytorch_quantization.nn.modules import _utils as quant_nn_utils
 from pytorch_quantization import calib
 from pytorch_quantization.tensor_quant import QuantDescriptor
 from pytorch_quantization import quant_modules
+from pytorch_quantization import tensor_quant
 from absl import logging as quant_logging
 
 # Custom Rules
 from quantization.rules import find_quantizer_pairs
 
+class QuantAdd(torch.nn.Module):
+    def __init__(self, quantization):
+        super().__init__()
+
+        if quantization:
+            self._input0_quantizer = quant_nn.TensorQuantizer(QuantDescriptor(num_bits=8, calib_method="histogram"))
+            self._input1_quantizer = quant_nn.TensorQuantizer(QuantDescriptor(num_bits=8, calib_method="histogram"))
+            self._input0_quantizer._calibrator._torch_hist = True
+            self._input1_quantizer._calibrator._torch_hist = True
+            self._fake_quant = True
+        self.quantization = quantization
+
+    def forward(self, x, y):
+        if self.quantization:
+            # print(f"QAdd {self._input0_quantizer}  {self._input1_quantizer}")
+            return self._input0_quantizer(x) + self._input1_quantizer(y)
+        return x + y
+    
 
 class disable_quantization:
     def __init__(self, model):
@@ -135,6 +154,24 @@ def quantization_ignore_match(ignore_policy : Union[str, List[str], Callable], p
     return False
 
 
+# For example: YoloV5 Bottleneck
+def bottleneck_quant_forward(self, x):
+    if hasattr(self, "addop"):
+        return self.addop(x, self.cv2(self.cv1(x))) if self.add else self.cv2(self.cv1(x))
+    return x + self.cv2(self.cv1(x)) if self.add else self.cv2(self.cv1(x))
+
+
+# For example: YoloV5 Bottleneck
+def replace_bottleneck_forward(model):
+    for name, bottleneck in model.named_modules():
+        if bottleneck.__class__.__name__ == "Bottleneck":
+            if bottleneck.add:
+                if not hasattr(bottleneck, "addop"):
+                    print(f"Add QuantAdd to {name}")
+                    bottleneck.addop = QuantAdd(bottleneck.add)
+                bottleneck.__class__.forward = bottleneck_quant_forward
+
+
 def replace_to_quantization_module(model : torch.nn.Module, ignore_policy : Union[str, List[str], Callable] = None):
 
     module_dict = {}
@@ -181,6 +218,14 @@ def apply_custom_rules_to_quantizer(model : torch.nn.Module, export_onnx : Calla
         print(f"Rules: {sub} match to {major}")
         get_attr_with_path(model, sub)._input_quantizer = get_attr_with_path(model, major)._input_quantizer
     os.remove("quantization-custom-rules-temp.onnx")
+
+    for name, bottleneck in model.named_modules():
+        if bottleneck.__class__.__name__ == "Bottleneck":
+            if bottleneck.add:
+                print(f"Rules: {name}.add match to {name}.cv1")
+                major = bottleneck.cv1.conv._input_quantizer
+                bottleneck.addop._input0_quantizer = major
+                bottleneck.addop._input1_quantizer = major
 
 
 def calibrate_model(model : torch.nn.Module, dataloader, device, num_batch=25):
@@ -238,8 +283,8 @@ def finetune(
     origin_model = deepcopy(model).eval()
     disable_quantization(origin_model).apply()
 
-    for k, v in model.named_parameters():
-        v.requires_grad = True  # train all layers
+    model.train()
+    model.requires_grad_(True)
 
     scaler       = amp.GradScaler(enabled=fp16)
     optimizer    = optim.Adam(model.parameters(), learningrate)
