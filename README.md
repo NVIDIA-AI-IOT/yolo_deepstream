@@ -28,14 +28,14 @@ Below table shows the end-to-end performance of processing 1080p videos with thi
 
 |Device      |precision      |Number <br>of streams | Batch Size | trtexec FPS| deepstream-app FPS<br>with cuda-post-process |deepstream-app FPS<br> with cpu-post-process|
 |-----------    |-----------    |----------------- | -----------|----------- |-----------|-----------|
-|  OrinX|  fp16         |  1               |     1      |       126  | 124       |   120     |
-|  OrinX|  fp16         |  16              |    16      |       162  | 145       |   135     |
-|  OrinX|  int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
-|  OrinX|  int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
-|  T4   |  fp16         |  1               |     1      |      132   |    125    |  123      |
-|  T4   |  fp16         |  16              |    16      |      169   |   169     |   123     |
-|  T4   |  int8(PTQ/QAT)|  1               |     1      |     208    |   170     |    127    |
-|  T4   |  int8(PTQ/QAT)|  16              |    16      |     305    |  300      |   132      |
+|  Orin-X|  FP16         |  1               |     1      |       126  | 124       |   120     |
+|  Orin-X|  FP16         |  16              |    16      |       162  | 145       |   135     |
+|  Orin-X|  Int8(PTQ/QAT)|  1               |     1      |       180  | 175       |   128      |
+|  Orin-X|  Int8(PTQ/QAT)|  16              |    16      |       264  | 264       |   135      |
+|  T4    |  FP16         |  1               |     1      |      132   |    125    |  123      |
+|  T4    |  FP16         |  16              |    16      |      169   |   169     |   123     |
+|  T4    |  Int8(PTQ/QAT)|  1               |     1      |     208    |   170     |    127    |
+|  T4    |  Int8(PTQ/QAT)|  16              |    16      |     305    |  300      |   132      |
 
 
 - note: trtexec cudaGraph not enabled as deepstream not support cudaGraph
