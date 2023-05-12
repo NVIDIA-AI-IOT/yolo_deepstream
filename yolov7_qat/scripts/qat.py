@@ -240,7 +240,7 @@ def cmd_sensitive_analysis(weight, device, cocodir, summary_save, num_image):
     train_dataloader = create_coco_train_dataloader(cocodir)
     val_dataloader   = create_coco_val_dataloader(cocodir, keep_images=None if num_image is None or num_image < 1 else num_image)
     quantize.replace_to_quantization_module(model)
-    quantize.calibrate_model(model, train_dataloader)
+    quantize.calibrate_model(model, train_dataloader, device)
 
     summary = SummaryTool(summary_save)
     print("Evaluate PTQ...")
