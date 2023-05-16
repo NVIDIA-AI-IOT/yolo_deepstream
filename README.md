@@ -1,19 +1,19 @@
-# yolo deepstream
+# Yolo DeepStream
 
 ##  Description
 
 This repo have 4 parts:
-### 1) yolov7_qat
+### 1) YoloV7_QAT
 In [yolov7_qat](yolov7_qat), We use [TensorRT's pytorch quntization tool](https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization) to Finetune training QAT yolov7 from the pre-trained weight. 
 Finally we get the same performance of PTQ in TensorRT on Jetson OrinX. And the accuracy(mAP) of the model only dropped a little.
 
-### 2) tensorrt_yolov7
+### 2) TensorRT_YoloV7
 In [tensorrt_yolov7](tensorrt_yolov7), We provide a standalone c++ yolov7-app sample here. You can use trtexec to convert FP32 onnx models or QAT-int8 models exported from repo [yolov7_qat](yolov7_qat) to trt-engines. And set the trt-engine as yolov7-app's input. It can do detections on images/videos. Or test mAP on COCO dataset.
 
-### 3) deepstream_yolo
+### 3) DeepStream_Yolo
 In [deepstream_yolo](deepstream_yolo), This sample shows how to integrate YOLO models with customized output layer parsing for detected objects with DeepStreamSDK.
 
-### 4) tensorrt_yolov4
+### 4) TensorRT_YoloV4
 In [tensorrt_yolov4](tensorrt_yolov4), This sample shows a standalone tensorrt-sample for yolov4.
 
 ## Performance
