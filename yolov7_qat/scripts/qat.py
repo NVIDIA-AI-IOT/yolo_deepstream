@@ -80,6 +80,46 @@ def load_yolov7_model(weight, device) -> Model:
         model.fuse()
     return model
 
+def create_custom_train_dataloader(datadir, train_txt_filename="train.txt", batch_size=4, image_size=640, single_cls=False, rect=False, image_weights=False):
+
+    with open("data/hyp.scratch.p5.yaml") as f:
+        hyp = yaml.load(f, Loader=yaml.SafeLoader)  # load hyps
+
+    loader = create_dataloader(
+        f"{datadir}/"+train_txt_filename, 
+        imgsz=image_size, 
+        batch_size=batch_size, 
+        opt=collections.namedtuple("Opt", "single_cls")(single_cls),
+        augment=True, hyp=hyp, rect=rect, cache=False, stride=32, pad=0, image_weights=image_weights)[0]
+    return loader
+
+def create_custom_val_dataloader(datadir, val_txt_filename="val.txt", batch_size=4, keep_images=None, image_size=640, single_cls=False, rect=True, image_weights=False):
+
+    loader = create_dataloader(
+        f"{datadir}/"+val_txt_filename, 
+        imgsz=image_size, 
+        batch_size=batch_size, 
+        opt=collections.namedtuple("Opt", "single_cls")(single_cls),
+        augment=False, hyp=None, rect=rect, cache=False,stride=32,pad=0.5, image_weights=image_weights)[0]
+
+    def subclass_len(self):
+        if keep_images is not None:
+            return keep_images
+        return len(self.img_files)
+
+    loader.dataset.__len__ = subclass_len
+    return loader
+
+def evaluate_custom(model, dataloader, using_cocotools = False, save_dir=".", conf_thres=0.001, iou_thres=0.65):
+
+    if save_dir and os.path.dirname(save_dir) != "":
+        os.makedirs(os.path.dirname(save_dir), exist_ok=True)
+
+    return test.test(
+        "data/custom_dataset.yaml", 
+        save_dir=Path(save_dir),
+        dataloader=dataloader, conf_thres=conf_thres,iou_thres=iou_thres,model=model,is_coco=True,
+        plots=False,half_precision=True,save_json=using_cocotools)[0][3]
 
 def create_coco_train_dataloader(cocodir, batch_size=10):
 
@@ -143,7 +183,7 @@ def export_onnx(model : Model, file, size=640, dynamic_batch=False):
     model.model[-1]._make_grid = grid_old_func
 
 
-def cmd_quantize(weight, cocodir, device, ignore_policy, save_ptq, save_qat, supervision_stride, iters, eval_origin, eval_ptq):
+def cmd_quantize(weight, custom, datadir, train_txt_filename, val_txt_filename, image_size, single_cls, rect, image_weights, device, ignore_policy, save_ptq, save_qat, supervision_stride, iters, eval_origin, eval_ptq):
     quantize.initialize()
 
     if save_ptq and os.path.dirname(save_ptq) != "":
@@ -154,8 +194,25 @@ def cmd_quantize(weight, cocodir, device, ignore_policy, save_ptq, save_qat, sup
     
     device  = torch.device(device)
     model   = load_yolov7_model(weight, device)
-    train_dataloader = create_coco_train_dataloader(cocodir)
-    val_dataloader   = create_coco_val_dataloader(cocodir)
+    if custom:
+        train_dataloader = create_custom_train_dataloader(
+            datadir,
+            train_txt_filename=train_txt_filename,
+            image_size=image_size,
+            single_cls=single_cls,
+            rect=rect,
+            image_weights=image_weights,
+        )
+        val_dataloader   = create_custom_val_dataloader(
+            datadir,
+            val_txt_filename=val_txt_filename,
+            image_size=image_size,
+            single_cls=single_cls,
+            rect=True,
+            image_weights=False)
+    else:
+        train_dataloader = create_coco_train_dataloader(datadir)
+        val_dataloader   = create_coco_val_dataloader(datadir)
     quantize.replace_to_quantization_module(model, ignore_policy=ignore_policy)
     quantize.apply_custom_rules_to_quantizer(model, export_onnx)
     quantize.calibrate_model(model, train_dataloader, device)
@@ -167,12 +224,18 @@ def cmd_quantize(weight, cocodir, device, ignore_policy, save_ptq, save_qat, sup
     if eval_origin:
         print("Evaluate Origin...")
         with quantize.disable_quantization(model):
-            ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
+            if custom:
+                ap = evaluate_custom(model, val_dataloader, True, json_save_dir)
+            else:
+                ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
             summary.append(["Origin", ap])
 
     if eval_ptq:
         print("Evaluate PTQ...")
-        ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
+        if custom:
+            ap = evaluate_custom(model, val_dataloader, True, json_save_dir)
+        else:
+            ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
         summary.append(["PTQ", ap])
 
     if save_ptq:
@@ -187,7 +250,10 @@ def cmd_quantize(weight, cocodir, device, ignore_policy, save_ptq, save_qat, sup
     def per_epoch(model, epoch, lr):
 
         nonlocal best_ap
-        ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
+        if custom:
+            ap = evaluate_custom(model, val_dataloader, True, json_save_dir)
+        else:
+            ap = evaluate_coco(model, val_dataloader, True, json_save_dir)
         summary.append([f"QAT{epoch}", ap])
 
         if ap > best_ap:
@@ -285,7 +351,14 @@ if __name__ == "__main__":
 
     qat = subps.add_parser("quantize", help="PTQ/QAT finetune ...")
     qat.add_argument("weight", type=str, nargs="?", default="yolov7.pt", help="weight file")
-    qat.add_argument("--cocodir", type=str, default="/datav/dataset/coco", help="coco directory")
+    qat.add_argument("--custom", action="store_true", help="custom dataset and parameters")
+    qat.add_argument("--datadir", type=str, default="/datav/dataset/coco", help="data directory")
+    qat.add_argument("--train-file", type=str, default="train.txt", help="train set txt file name (eg train.txt)")
+    qat.add_argument("--val-file", type=str, default="val.txt", help="validation set txt file name (eg val.txt)")
+    qat.add_argument("--image-size", type=int, default=640, help="image size")
+    qat.add_argument("--single-cls", action="store_true", help="single class")
+    qat.add_argument("--rect", action="store_true", help="Rectangular training")
+    qat.add_argument("--img-wts", action="store_true", help="Image weights")
     qat.add_argument("--device", type=str, default="cuda:0", help="device")
     qat.add_argument("--ignore-policy", type=str, default="model\.105\.m\.(.*)", help="regx")
     qat.add_argument("--ptq", type=str, default="ptq.pt", help="file")
@@ -317,9 +390,11 @@ if __name__ == "__main__":
     elif args.cmd == "quantize":
         print(args)
         cmd_quantize(
-            args.weight, args.cocodir, args.device, args.ignore_policy, 
-            args.ptq, args.qat, args.supervision_stride, args.iters,
-            args.eval_origin, args.eval_ptq
+            weight=args.weight, custom=args.custom, datadir=args.datadir, train_txt_filename=args.train_file, 
+            val_txt_filename=args.val_file, image_size=args.image_size, single_cls=args.single_cls,
+            rect=args.rect, image_weights=args.img_wts, device=args.device, ignore_policy=args.ignore_policy, 
+            save_ptq=args.ptq, save_qat=args.qat, supervision_stride=args.supervision_stride, iters=args.iters,
+            eval_origin=args.eval_origin, eval_ptq=args.eval_ptq,
         )
     elif args.cmd == "sensitive":
         cmd_sensitive_analysis(args.weight, args.device, args.cocodir, args.summary, args.num_image)
