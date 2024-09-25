@@ -5,11 +5,11 @@
 |  Method   | Calibration method  | mAP<sup>val<br>0.5|mAP<sup>val<br>0.5:0.95 |batch-1 fps<br>Jetson Orin-X  |batch-16 fps<br>Jetson Orin-X  |weight|
 |  ----  | ----  |----  |----  |----|----|-|
 | pytorch FP16 | -             | 0.6972 | 0.5120 |-|-|[yolov7.pt](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt)|
-| pytorch PTQ-INT8  | Histogram(MSE)  | 0.6957 | 0.5100 |-|-|[yolov7_ptq.pt](https://drive.google.com/file/d/1AMymKjKMDmhuNSI3jzL6dv_Pc3rdDDj1/view?usp=sharing) [yolov7_ptq_640.onnx](https://drive.google.com/file/d/1kvCV8PxV6RCidehN4Wp78M116oZ_mSTX/view?usp=sharing)|
-| pytorch QAT-INT8  | Histogram(MSE)  | 0.6961 | 0.5111 |-|-|[yolov7_qat.pt](https://drive.google.com/file/d/16Ylot5AfkjKeCyVlX3ECsuT6VmHULkd-/view?usp=sharing)|
-| TensorRT FP16| -             | 0.6973 | 0.5124 |140 |168|[yolov7.onnx](https://drive.google.com/file/d/1R5muSJWVC_BQKml4s4wQQewUXdmQl0Mm/view?usp=sharing) |
+| pytorch PTQ-INT8  | Histogram(MSE)  | 0.6957 | 0.5100 |-|-|[yolov7_ptq.pt](https://nvidia.box.com/shared/static/j0rclm9k2ymj6ahdx55dxnnskzq91flh) [yolov7_ptq_640.onnx](https://nvidia.box.com/shared/static/rlv3buq7sei2log2d3beyg1jhjyw59hn)|
+| pytorch QAT-INT8  | Histogram(MSE)  | 0.6961 | 0.5111 |-|-|[yolov7_qat.pt](https://nvidia.box.com/shared/static/vph9af9rbe7ed7ibfnajsk248mw9nq9f)|
+| TensorRT FP16| -             | 0.6973 | 0.5124 |140 |168|[yolov7.onnx](https://nvidia.box.com/shared/static/rmh8rttesg4cgrysb2qm12udpvd95as1) |
 | TensorRT PTQ-INT8 | TensorRT built in EntropyCalibratorV2 | 0.6317 | 0.4573 |207|264|-|
-| TensorRT QAT-INT8 | Histogram(MSE)  | 0.6962 | 0.5113 |207|266|[yolov7_qat_640.onnx](https://drive.google.com/file/d/1qn-p4N3GZojIOvvxkzmPGCQKR6q4ov73/view?usp=sharing)|
+| TensorRT QAT-INT8 | Histogram(MSE)  | 0.6962 | 0.5113 |207|266|[yolov7_qat_640.onnx](https://nvidia.box.com/shared/static/v1ze885p35hfjl96xtw8s0xbcpv64tfr)|
  - network input resolution: 3x640x640
  - note: trtexec cudaGraph is enabled
 
