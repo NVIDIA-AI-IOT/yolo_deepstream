@@ -31,8 +31,6 @@
 #include <unordered_map>
 #include "nvdsinfer_custom_impl.h"
 
-static const int NUM_CLASSES_YOLO = 80;
-
 float clamp(const float val, const float minVal, const float maxVal)
 {
     assert(minVal <= maxVal);
@@ -136,13 +134,6 @@ extern "C" bool NvDsInferParseCustomYoloV4(
     NvDsInferParseDetectionParams const& detectionParams,
     std::vector<NvDsInferParseObjectInfo>& objectList)
 {
-    if (NUM_CLASSES_YOLO != detectionParams.numClassesConfigured)
-    {
-        std::cerr << "WARNING: Num classes mismatch. Configured:"
-                  << detectionParams.numClassesConfigured
-                  << ", detected by network: " << NUM_CLASSES_YOLO << std::endl;
-    }
-
     std::vector<NvDsInferParseObjectInfo> objects;
 
     const NvDsInferLayerInfo &boxes = outputLayersInfo[0]; // num_boxes x 4
@@ -226,13 +217,6 @@ static bool NvDsInferParseYoloV7(
     }
     const NvDsInferLayerInfo &layer = outputLayersInfo[0];
 
-    if (NUM_CLASSES_YOLO != detectionParams.numClassesConfigured)
-    {
-        std::cerr << "WARNING: Num classes mismatch. Configured:"
-                  << detectionParams.numClassesConfigured
-                  << ", detected by network: " << NUM_CLASSES_YOLO << std::endl;
-    }
-
     std::vector<NvDsInferParseObjectInfo> objects;
 
     float* data = (float*)layer.buffer;
@@ -251,7 +235,7 @@ static bool NvDsInferParseYoloV7(
         
         float maxScore = 0;
         int index = 0;
-        for (int j = 0 ;j < NUM_CLASSES_YOLO; j++){
+        for (int j = 0 ;j < detectionParams.numClassesConfigured; j++){
            if(*classes_scores > maxScore){
               index = j;
               maxScore = *classes_scores;
