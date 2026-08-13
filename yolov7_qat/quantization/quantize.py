@@ -99,6 +99,7 @@ def have_quantizer(module):
     for name, module in module.named_modules():
         if isinstance(module, quant_nn.TensorQuantizer):
             return True
+    return False
 
 
 # Initialize PyTorch Quantization
