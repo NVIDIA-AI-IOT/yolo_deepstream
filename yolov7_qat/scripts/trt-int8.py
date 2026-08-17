@@ -134,7 +134,8 @@ def build_int8_engine(onnx_file, calib, batch_size=32):
         config.set_flag(trt.BuilderFlag.INT8)
         config.int8_calibrator = calib
         with trt.OnnxParser(network, TRT_LOGGER) as parser:
-            parser.parse_from_file(onnx_file)
+            if not parser.parse_from_file(onnx_file):
+                raise RuntimeError(f"Failed to parse ONNX {onnx_file}: {parser.num_errors} error(s)")
         # network.mark_output(model_tensors.find(ModelData.OUTPUT_NAME))
         # Build engine and do int8 calibration.
         plan = builder.build_serialized_network(network, config)
