@@ -118,7 +118,10 @@ decodeYoloV4Tensor(
             }
         }
 
-        if (maxProb > detectionParams.perClassPreclusterThreshold[maxIndex])
+        // maxIndex stays -1 when no class score is above 0; skip the box
+        // rather than read perClassPreclusterThreshold[-1].
+        if (maxIndex >= 0 &&
+            maxProb > detectionParams.perClassPreclusterThreshold[maxIndex])
         {
             addBBoxProposalYoloV4(bx1, by1, bx2, by2, netW, netH, maxIndex, maxProb, binfo);
         }
